@@ -1,5 +1,8 @@
 <launch>
 
+  <!-- Python scipts to start-->
+  
+
   <!--Robot Description from URDF-->
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(find ros_101_gazebo_rviz)/urdf/robot_tutorial.xacro"/>
 
