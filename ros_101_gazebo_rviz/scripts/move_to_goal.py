@@ -29,6 +29,13 @@ def move_robot():
     angle = math.atan2(goal.pose.position.y - robot_y_pos, goal.pose.position.x - robot_x_pos)
     print(f"Angle: {angle:.2f}")
 
+    # Convert the goal to Euler values 
+    orientation_quat = (goal.pose.orientation.x, goal.pose.orientation.y, goal.pose.orientation.z, goal.pose.orientation.w)
+    _, _, yaw = euler_from_quaternion(orientation_quat)
+
+    # compute the shortest angle to rotate to
+    shortest_angle = math.atan2(math.sin(yaw- robot_theta), math.cos(yaw- robot_theta))
+
     # Create twist object
     twist = Twist()
 
@@ -37,29 +44,19 @@ def move_robot():
     dY = robot_y_pos - goal.pose.position.y 
     distance_to_goal = math.sqrt(dX**2 + dY**2)
 
-    if distance_to_goal < 0.1:             
-        twist.linear.x = 0
-        pub.publish(twist)
-        print(f"Goal reached")
-
-        shortest_angle = math.atan2(math.sin(goal.pose.orientation.z - robot_theta), math.cos(goal.pose.orientation.z - robot_theta))
-        print(f"goal X: {goal.pose.position.x:.2f}")
-        print(f"goal Y: {goal.pose.position.y:.2f}")
-        print(f"goal orientation Z: {goal.pose.orientation.z:.2f}")
-        print(f"Shortest Angle: {shortest_angle:.2f}")
-
+    if distance_to_goal < 0.1:              # If the target distance is within the limits stop driving and rotate to final orientation         
         if abs(shortest_angle) <= 0.035:
             twist.angular.z = 0
             pub.publish(twist)
             print(f"Final position reached")            
         else:
-            twist.angular.z = 0.5 * shortest_angle
+            twist.angular.z = 1 * shortest_angle
             pub.publish(twist)
             print(f"Rotate to final orientation")
     else:
         if abs(angle - robot_theta) > 0.2:
             # We need to rotate           
-            twist.angular.z = 0.5 if angle > robot_theta else -0.5
+            twist.angular.z = 0.7 if angle > robot_theta else -0.7
             # We never assign the linear x, so it won't move forward. Only rotate
             pub.publish(twist)
             print(f"Rotate to goal")
@@ -71,9 +68,6 @@ def move_robot():
             pub.publish(twist)
             print(f"Drive to goal")
             print(distance_to_goal)
-    
-
-
 
 def goal_callback(msg):
     global goal
