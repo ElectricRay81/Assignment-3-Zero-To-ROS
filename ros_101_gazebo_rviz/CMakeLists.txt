@@ -209,4 +209,5 @@ catkin_install_python(
   PROGRAMS
   scripts/tf_example.py
   scripts/get_desired_position.py
+  scripts/move_to_goal.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

@@ -109,8 +109,7 @@ def callback(data):
                 print(f"drive yaw accomplished")
             else:
                 print(f"Rotate to drive yaw")
-                angular_vel = (1/3.14) * shortest_angle             #1/3.14 is proportional gain for angular velocity (the greater the differencethe faster it rotates)
-                linear_vel = 0
+                twist.angular.z = (1/3.14) * shortest_angle             #1/3.14 is proportional gain for angular velocity (the greater the differencethe faster it rotates)
                 drive_yaw_arrived = False
                 move_to_target_pub.publish(twist)
 
